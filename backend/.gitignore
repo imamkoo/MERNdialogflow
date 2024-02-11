@@ -1,0 +1,38 @@
+# Dependensi
+/node_modules
+
+# File konfigurasi lingkungan
+.env
+
+# Direktori yang mungkin dibuat oleh editor teks/code
+/.vscode
+/.idea
+/*.sublime-project
+/*.sublime-workspace
+
+# OS file
+.DS_Store
+Thumbs.db
+
+# Direktori dan file log
+/logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Direktori dan file temporer
+/tmp
+/temp
+
+# Direktori dan file dari sistem build
+/dist
+/build
+
+# file lock
+package-lock.json
+yarn.lock
+
+# File dan folder produksi lokal
+/public
+/output
