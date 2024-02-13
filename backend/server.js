@@ -5,9 +5,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors());
 
 // Middleware untuk mengurai JSON dari request body
 app.use(bodyParser.json());
