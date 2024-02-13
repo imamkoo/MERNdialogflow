@@ -19,7 +19,7 @@ const Navbar = () => {
     <div className="flex justify-between items-center p-2 bg-gray-800 text-white">
       <button
         onClick={() => navigate("/chat")}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
+        className=" text-white font-bold py-2 px-2 rounded"
       >
         Chat
       </button>
