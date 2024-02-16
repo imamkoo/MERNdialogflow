@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../index.css";
 
 function ChatPage() {
@@ -6,39 +6,22 @@ function ChatPage() {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const endOfMessagesRef = useRef(null);
 
-  // Muat riwayat pesan dari localStorage ketika komponen dimuat
-  useEffect(() => {
-    const storedMessages = localStorage.getItem("messages");
-    if (storedMessages) {
-      setMessages(JSON.parse(storedMessages));
-    }
-  }, []);
-
-  // Simpan pesan ke localStorage setiap kali ada perubahan pada messages
-  useEffect(() => {
-    localStorage.setItem("messages", JSON.stringify(messages));
-  }, [messages]);
-
-  const fetchToken = () => {
-    return localStorage.getItem("token");
-  };
+  const fetchToken = () => localStorage.getItem("token");
 
   const sendMessageToBackend = async (messageText) => {
     setIsLoading(true);
+    // Langkah 1: Tambahkan pesan pengguna ke state segera
+    const newMessageObj = { text: messageText, sender: "user" };
+    setMessages((prevMessages) => [...prevMessages, newMessageObj]);
+
     const token = fetchToken();
     if (!token) {
       setError("You must be logged in to chat.");
       setIsLoading(false);
       return;
     }
-
-    // Tambahkan pesan pengguna ke tampilan segera tanpa menunggu respons
-    const tempId = new Date().getTime(); // ID sementara untuk tracking
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: tempId, text: messageText, sender: "user" },
-    ]);
 
     try {
       const response = await fetch(
@@ -59,18 +42,13 @@ function ChatPage() {
       }
 
       const { reply } = await response.json();
-      // Tambahkan respons dari bot ke tampilan
+      // Langkah 2: Tambahkan balasan bot ke state setelah diterima
       setMessages((prevMessages) => [
-        ...prevMessages.filter((msg) => msg.id !== tempId), // Hapus pesan sementara
-        { id: tempId, text: messageText, sender: "user" }, // Tambahkan ulang untuk memastikan urutan
-        { id: new Date().getTime(), text: reply, sender: "bot" },
+        ...prevMessages,
+        { text: reply, sender: "bot" },
       ]);
     } catch (error) {
       setError(error.message);
-      // Hapus pesan sementara jika gagal
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== tempId)
-      );
     } finally {
       setIsLoading(false);
     }
@@ -83,9 +61,13 @@ function ChatPage() {
     setNewMessage("");
   };
 
+  useEffect(() => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="flex flex-col h-screen ">
-      <div className="flex-grow overflow-y-auto p-4 space-y-2 chat-container ">
+    <div className="flex flex-col h-screen">
+      <div className="flex-grow overflow-y-auto p-4 space-y-2 pb-36">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -98,11 +80,12 @@ function ChatPage() {
             {message.text}
           </div>
         ))}
+        <div ref={endOfMessagesRef} />
       </div>
-      <div className="chat-input-container">
+      <div className="p-2 bg-gray-100 border-t border-gray-200 w-full fixed inset-x-0 bottom-0 ">
         <form
           onSubmit={handleSubmit}
-          className="flex p-4 space-x-3 bg-gray-100 "
+          className="flex p-2 space-x-3 bg-gray-100"
         >
           <input
             type="text"

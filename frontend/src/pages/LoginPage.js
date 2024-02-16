@@ -8,6 +8,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -71,7 +72,7 @@ function LoginPage() {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -79,6 +80,14 @@ function LoginPage() {
               required
             />
           </div>
+          <button
+            type="button" // Pastikan ini bukan type submit
+            onClick={() => setShowPassword(!showPassword)}
+            className=""
+          >
+            {showPassword ? "Hide" : "Show"} Password
+          </button>
+
           <button
             type="submit"
             className="w-full p-2 text-white bg-green-500 rounded-md hover:bg-green-700"

@@ -49,4 +49,15 @@ router.post("/send-message", auth, async (req, res) => {
   }
 });
 
+router.get("/history", auth, async (req, res) => {
+  try {
+    const userId = req.user.id; // Diperoleh dari middleware auth
+    const chats = await Chat.find({ userId }).sort({ date: 1 }); // Asumsi model Chat Anda memiliki field userId
+    res.json(chats);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Failed to get chat history." });
+  }
+});
+
 module.exports = router;

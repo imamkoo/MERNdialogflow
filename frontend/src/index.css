@@ -22,7 +22,3 @@ code {
   width: 100%;
   z-index: 1000; /* Contoh z-index */
 }
-
-.chat-container {
-  padding-top: 60px; /* Ganti dengan tinggi Navbar Anda */
-}
